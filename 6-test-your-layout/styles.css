@@ -1,0 +1,86 @@
+body {
+    background-image: url('background.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.hide {
+    display: none;
+}
+
+.container {
+    border: 4px solid white;
+    border-radius: 4px;
+    background-color: black;
+    margin: 20px;
+}
+
+#videos-container {
+    width: 30%;
+    height: 100%;
+    float: left;
+}
+
+#videos-container .container {
+    margin-right: 10px;
+    position: relative;
+}
+
+.name-banner {
+    position: absolute;
+    bottom: 10px;
+    left: -20px;
+    right: 0;
+    background-image: linear-gradient(to right, #1E2DFF, #1264FF);
+    color: white;
+}
+
+.name-banner p {
+    margin: 8px 30px;
+}
+
+#screenshare {
+    width: 70%;
+    height: 100%;
+    float: right;
+}
+
+#screenshare .container {
+    margin-left: 10px;
+}
+
+video {
+    width: 100%;
+    height: auto;
+}
+
+/* Display a video player in full screen */
+#video-url-player {
+    z-index: 10000;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    background-color: black;
+}
+
+#live {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    padding: 8px 12px;
+    border-radius: 5px;
+    background-color: rgba(0, 0, 0, .25);
+    color: white;
+}
+
+#live .circle {
+    width: 14px;
+    height: 14px;
+    border-radius: 14px;
+    background-color: red;
+    float: left;
+    margin: 2px 8px 2px 0;
+}

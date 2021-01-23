@@ -1,0 +1,26 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Voxeet SDK and jQuery the CDN unpkg.com -->
+    <script type="text/javascript" src="https://unpkg.com/@voxeet/voxeet-web-sdk"></script>
+    <script type="text/javascript" src="https://unpkg.com/jquery"></script>
+    
+    <!-- Mixer layout script and styles -->
+    <script type="text/javascript" src="script.js"></script>
+    <link rel="stylesheet" type="text/css" href="styles.css" />
+</head>
+<body>
+    <div class="hide">
+        <input type="hidden" value="accessToken" id="accessToken" name="accessToken"/>
+        <input type="hidden" value="refreshToken" id="refreshToken" name="refreshToken"/>
+        <input type="hidden" value="refreshUrl" id="refreshUrl" name="refreshUrl"/>
+        <input type="hidden" value="voxeet" id="conferenceId" name="conferenceId"/>
+        <input type="hidden" value="1234" id="thirdPartyId" name="thirdPartyId"/>
+        <input type="hidden" value="stream" id="layoutType" name="layoutType"/>
+        <button id="joinConference">Join conference</button>
+        <button id="replayConference">Replay conference</button>
+    </div>
+</body>
+</html>
