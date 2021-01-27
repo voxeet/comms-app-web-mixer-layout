@@ -22,7 +22,7 @@ After each of the following steps of this tutorial, you will find a link to the 
 
 ## Let's get started
 
-Consider that we want to use the Dolby Interactivity APIs platform to host a series of webinar type of events that will be recorded and live streamed online. At the end of this tutorial, the goal is for you to understand how you can create your very own mixer layout application that matches your company's branding so you can use to generate recordings or live stream to your end users.
+Consider that we want to use the Dolby Interactivity APIs platform to host a series of webinar type of events that will be recorded and live streamed online. At the end of this tutorial, the goal is for you to understand how you can create your very own mixer layout application with your company branding, and generate recordings or live stream to your end users.
 
 The mixer layout is a web application, so we are going to create a very simple html page with some JavaScript to generate a layout based on the dynamic of the conference, and some CSS to make it nicer. To make things simpler, for our webinars, we will have no more than 2 participants with the video on. The hosts we will be able to play a video and start a screen share.
 
@@ -66,12 +66,12 @@ I highly recommend you create a custom "device" in Google Chrome Developer Tools
 
 As of the publication of this article, the Dolby mixer application is using Chrome 87 to load the mixer web application. To make sure the result that you get out of the recording or the live stream is what you expect, please use the same version on your local development machine.
 
-> Download the [source code](1-getting-started/) for this first step.
+> Download the [source code](1-getting-started/) for this step.
 
 
 ## Layout initialization
 
-The mixer layout application is a basic web site that has no idea what credentials to use to connect to the Dolby Interactivity APIs, or what conference to join... To provide these settings, when a mixer is requested to record or live stream a conference, it will start the website and inject all the required information into the HTML using input elements. When the mixer is ready to process the conference, it will simulate a click on one of a couple of buttons to tell your application to join or reply a conference. We do not need those elements to appear on the UI so we can hide them using the CSS class `hide`.
+The mixer layout application is a basic web site that has no idea what credentials to use to connect to the Dolby Interactivity APIs, or what conference to join... To provide these settings, when a mixer is requested to record or live stream a conference, it will start the website and inject all the required information into the HTML using input elements. When the mixer is ready to process the conference, it will simulate a click on the `joinConference` button to tell your application to join a conference or the `replayConference` button to replay a conference. We do not need those elements to appear on the UI so we can hide them using the CSS class `hide`.
 
 ```css
 .hide {
@@ -118,7 +118,7 @@ const initializeVoxeetSDK = () => {
 };
 ```
 
-When the mixer is ready to start its job, it will be waiting for a `div` element with the id `conferenceStartedVoxeet` to be present in the DOM. When the document is ready, we can use jQuery to create that div at the end of the body of our web page. This empty div will not be visible in the layout, it is just a way to signal the mixer that the application is ready to roll. Right before creating the div element, this is where you might want to customize your application UI based on the type of layout requested by the mixer. We will do just that in the [Layout type](#layout-type) section.
+When the mixer is ready to start its job, it will be waiting for a `div` element with the id `conferenceStartedVoxeet` to be present in the DOM. When the document is ready, we can use jQuery to create that div at the end of the body of our web page. This empty div will not be visible in the layout; it is just a way to signal the mixer that the application is ready to roll. Right before creating the div element, this is where you might want to customize your application UI based on the type of layout requested by the mixer. We will do just that in the [Layout type](#layout-type) section.
 
 ```javascript
 $(document).ready(() => {
@@ -207,7 +207,7 @@ $("#replayConference").click(() => {
 
 The base of our layout application is ready, the mixer is capable of running your application, joining (or replaying) a conference and releasing the resources at the end of it. In the next step we will start creating our custom presentation.
 
-> Download the [source code](2-layout-initialization/) for this second step.
+> Download the [source code](2-layout-initialization/) for this step.
 
 
 ## Custom presentation
@@ -217,7 +217,7 @@ We want to build a webinar type of event with the following characteristics:
 - When someone requests to play a video, we will have the video player taking the whole screen.
 - A participant screenshare will be displayed in a larger area on the side of the layout.
 
-At the end of the `body` in the HTML code, add the following container to host the video streams from the participants.
+At the end of the `body` in the HTML code add the following container to host the video streams from the participants:
 
 ```html
 <div id="videos-container"></div>
@@ -385,7 +385,7 @@ video {
 }
 ```
 
-To test what the UI looks like when you add a couple of participants and one screenshare, add temporarily the following lines at the end of the `$(document).ready(() => { });`:
+To test what the UI looks like when you add a couple of participants and one screenshare, you can temporarily add the following lines at the end of the `$(document).ready(() => { });`:
 
 ```javascript
 addVideoNode({id: "01", info: {name: "Guest 01"}}, null);
@@ -397,7 +397,7 @@ And this is the result:
 
 ![](images/3-custom-presentation.png)
 
-> Download the [source code](3-custom-presentation/) for this third step.
+> Download the [source code](3-custom-presentation/) for this step.
 
 
 ## Connect the Voxeet SDK to our layout
@@ -454,7 +454,7 @@ VoxeetSDK.conference.on('streamRemoved', (participant, stream) => {
 });
 ```
 
-As well as the video presentation events `started`, `paused`, `played`, `sought` and `stopped`.
+The `events.js` also subscribes to the video presentation events `started`, `paused`, `played`, `sought` and `stopped`.
 
 ```javascript
 VoxeetSDK.videoPresentation.on("started", (vp) => {
@@ -484,9 +484,9 @@ VoxeetSDK.videoPresentation.on("stopped", () => {
 });
 ```
 
-And that's it, we have implemented all the features that we need for our custom mixer layout application.
+And that's it; we have implemented all the features that we need for our custom mixer layout application.
 
-> Download the [source code](4-connect-sdk/) for this fourth step.
+> Download the [source code](4-connect-sdk/) for this step.
 
 
 ## Layout type
@@ -508,7 +508,7 @@ At the end of the HTML body, add the following code:
 </div>
 ```
 
-In the CSS file add the following style of the live message.
+In the CSS file, add the following style of the live message:
 
 ```css
 #live {
@@ -541,7 +541,7 @@ if (layoutType === "stream" || layoutType === "hls") {
 }
 ```
 
-If you want to see what the live message will look like, when the document is ready, in the `$(document).ready(() => { });`, add temporarily the code:
+If you want to see what the live message will look like, when the document is ready, in the `$(document).ready(() => { });`, temporarily add the following code:
 
 ```javascript
 // Remove this line, this is just a test
@@ -552,7 +552,7 @@ This is what the live message looks like:
 
 ![](images/5-layout-type.png)
 
-> Download the [source code](5-layout-type/) for this fourth step.
+> Download the [source code](5-layout-type/) for this step.
 
 
 ## Test your layout
@@ -587,18 +587,18 @@ VoxeetSDK.session.open(mixer)
 
 Now that you are ready to record and stream your conferences, copy the files of your custom mixer layout application and publish it on your web server. You can also use [GitHub Pages](https://pages.github.com/), [Static website hosting in Microsoft Azure Storage](https://docs.microsoft.com/en-us/azure/storage/blobs/storage-blob-static-website) if you want a simple and free or inexpensive web server for your layout.
 
-> Note: a simple file storage is enough, you do not need a backend, but the files must be publicly available for our mixer infrastructure to access and over HTTPS.
+> Note: a simple storage solution is enough, you do not need a backend, but the files must be publicly available for our mixer infrastructure to access and over HTTPS.
 
-Connect to the dolby.io dashboard, in the settings of your application, provide the URL of your mixer layout application.
+Connect to the dolby.io dashboard. In the settings page for your application, provide the URL of your mixer layout application.
 
 ![](images/dolby-io-settings-url.png)
 
-When you request to record to start streaming your conference, we will start a mixer in our environment that will launch the web site URL that you have provided.
+When you request to record, or to start streaming your conference, we will start a mixer in our environment that will launch the web site URL that you have provided.
 
 
 ## Resources
 
-You now have a custom layout ready to live stream and record your conferences. If you want to go further, please visit the following resources:
+You now have a custom layout ready to live stream and record your conferences. For additional information, see:
 
 - https://dolby.io
 - https://dolby.io/developers/interactivity-apis/client-sdk/recording
