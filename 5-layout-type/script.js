@@ -71,7 +71,7 @@ const replayConference = () => {
     // Open a session for the mixer
     VoxeetSDK.session.open(mixer)
         .then(() => VoxeetSDK.conference.fetch(conferenceId))
-        // Replay the conference from the begining
+        // Replay the conference from the beginning
         .then((conference) => VoxeetSDK.conference.replay(conference, 0, { enabled: true}))
         .catch((err) => console.log(err));
 };

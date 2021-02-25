@@ -199,13 +199,13 @@ const replayConference = () => {
     // Open a session for the mixer
     VoxeetSDK.session.open(mixer)
         .then(() => VoxeetSDK.conference.fetch(conferenceId))
-        // Replay the conference from the begining
+        // Replay the conference from the beginning
         .then((conference) => VoxeetSDK.conference.replay(conference, 0, { enabled: true}))
         .catch((err) => console.log(err));
 };
 ```
 
-Add the following lines at the begining of the `$(document).ready(() => { });` to register the click event of the buttons to point to the functions created earlier:
+Add the following lines at the beginning of the `$(document).ready(() => { });` to register the click event of the buttons to point to the functions created earlier:
 
 ```javascript
 $("#joinConference").click(joinConference);
