@@ -142,14 +142,14 @@ VoxeetSDK.conference.on("ended", onConferenceEnded);
 When a mixer joins a live conference that you want to record or live stream, it will simulate a click on the `joinConference` button. We need to trigger an action when it happens.
 
 ```javascript
-$("#joinConference").click(() => {
+const joinConference = () => {
     // Initialize the SDK
     initializeVoxeetSDK();
 
     // Load the settings injected by the mixer
-    const conferenceId = $("conferenceId").val();
-    const thirdPartyId = $("thirdPartyId").val();
-    const layoutType = $("layoutType").val();
+    const conferenceId = $("#conferenceId").val();
+    const thirdPartyId = $("#thirdPartyId").val();
+    const layoutType = $("#layoutType").val();
 
     const mixer = {
         name: "Mixer",
@@ -175,20 +175,20 @@ $("#joinConference").click(() => {
         // Join the conference
         .then((conference) => VoxeetSDK.conference.join(conference, joinOptions))
         .catch((err) => console.log(err));
-});
+};
 ```
 
 When a mixer is requested to generate a recording of a conference that has already happened, it will simulate a click on the `replayConference` button. This can happen if you want to use a new layout application or if you did not use the [liveRecording](https://dolby.io/developers/interactivity-apis/client-sdk/reference-javascript/model/conferenceparameters#liverecording) setting when creating the conference. We need to trigger an action when it happens.
 
 ```javascript
-$("#replayConference").click(() => {
+const replayConference = () => {
     // Initialize the SDK
     initializeVoxeetSDK();
 
     // Load the settings injected by the mixer
-    const conferenceId = $("conferenceId").val();
-    const thirdPartyId = $("thirdPartyId").val();
-    const layoutType = $("layoutType").val();
+    const conferenceId = $("#conferenceId").val();
+    const thirdPartyId = $("#thirdPartyId").val();
+    const layoutType = $("#layoutType").val();
 
     const mixer = {
         name: "Mixer",
@@ -199,10 +199,17 @@ $("#replayConference").click(() => {
     // Open a session for the mixer
     VoxeetSDK.session.open(mixer)
         .then(() => VoxeetSDK.conference.fetch(conferenceId))
-        // Replay the conference from the beginning
+        // Replay the conference from the begining
         .then((conference) => VoxeetSDK.conference.replay(conference, 0, { enabled: true}))
         .catch((err) => console.log(err));
-});
+};
+```
+
+Add the following lines at the begining of the `$(document).ready(() => { });` to register the click event of the buttons to point to the functions created earlier:
+
+```javascript
+$("#joinConference").click(joinConference);
+$("#replayConference").click(replayConference);
 ```
 
 The base of our layout application is ready, the mixer is capable of running your application, joining (or replaying) a conference and releasing the resources at the end of it. In the next step we will start creating our custom presentation.

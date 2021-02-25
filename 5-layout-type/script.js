@@ -18,14 +18,14 @@ const initializeVoxeetSDK = () => {
     );
 };
 
-$("#joinConference").click(() => {
+const joinConference = () => {
     // Initialize the SDK
     initializeVoxeetSDK();
 
     // Load the settings injected by the mixer
-    const conferenceId = $("conferenceId").val();
-    const thirdPartyId = $("thirdPartyId").val();
-    const layoutType = $("layoutType").val();
+    const conferenceId = $("#conferenceId").val();
+    const thirdPartyId = $("#thirdPartyId").val();
+    const layoutType = $("#layoutType").val();
 
     const mixer = {
         name: "Mixer",
@@ -51,16 +51,16 @@ $("#joinConference").click(() => {
         // Join the conference
         .then((conference) => VoxeetSDK.conference.join(conference, joinOptions))
         .catch((err) => console.log(err));
-});
+};
 
-$("#replayConference").click(() => {
+const replayConference = () => {
     // Initialize the SDK
     initializeVoxeetSDK();
 
     // Load the settings injected by the mixer
-    const conferenceId = $("conferenceId").val();
-    const thirdPartyId = $("thirdPartyId").val();
-    const layoutType = $("layoutType").val();
+    const conferenceId = $("#conferenceId").val();
+    const thirdPartyId = $("#thirdPartyId").val();
+    const layoutType = $("#layoutType").val();
 
     const mixer = {
         name: "Mixer",
@@ -74,7 +74,7 @@ $("#replayConference").click(() => {
         // Replay the conference from the begining
         .then((conference) => VoxeetSDK.conference.replay(conference, 0, { enabled: true}))
         .catch((err) => console.log(err));
-});
+};
 
 
 // Add the video stream to the web page
@@ -180,6 +180,9 @@ VoxeetSDK.conference.on("left", onConferenceEnded);
 VoxeetSDK.conference.on("ended", onConferenceEnded);
 
 $(document).ready(() => {
+    $("#joinConference").click(joinConference);
+    $("#replayConference").click(replayConference);
+    
     const layoutType = $("layoutType").val();
     if (layoutType === "stream" || layoutType === "hls") {
         // Display the live message for the live streams
