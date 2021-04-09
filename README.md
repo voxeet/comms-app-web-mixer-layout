@@ -113,7 +113,9 @@ const initializeVoxeetSDK = () => {
                 'Authorization': 'Bearer ' + accessToken
             },
             body: { refresh_token: refreshToken }
-        }).then(d => d.json().access_token)
+        })
+        .then(data => data.json())
+        .then(json => json.access_token)
     );
 };
 ```
