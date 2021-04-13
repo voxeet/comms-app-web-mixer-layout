@@ -2,7 +2,7 @@
 
 ## Update
 
-We have recently upgraded our mixer platform to generate recording and stream to an RTMP endpoint in 1080p. HLS streams are not affected and continue to use the 720p resolution. The blog post reflect those changes.
+We have recently upgraded our mixer platform to generate recording and stream to an RTMP endpoint in 1080p. HLS streams are not affected and continue to use the 720p resolution. The blog post reflects those changes.
 
 ## Introduction
 
