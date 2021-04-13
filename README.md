@@ -257,9 +257,7 @@ const addVideoNode = (participant, stream) => {
             .addClass("container")
             .appendTo("#videos-container");
 
-        $("<video />")
-            .attr("autoplay", "autoplay")
-            .attr("muted", true)
+        $("<video autoplay playsInline muted />")
             .appendTo(participantNode);
 
         // Add a temporary banner with the name of the participant
@@ -296,8 +294,7 @@ const addScreenShareNode = (stream) => {
         .addClass("container")
         .appendTo(screenshareNode);
 
-    let videoNode = $("<video />")
-        .attr("autoplay", "autoplay")
+    let videoNode = $("<video autoplay playsInline muted />")
         .appendTo(container);
 
     // Attach the stream to the video element
@@ -315,11 +312,9 @@ When a participant requests to play a video, create the function `addVideoPlayer
 ```javascript
 // Add a Video player to the web page
 const addVideoPlayer = (videoUrl) => {
-    $("<video />")
+    $("<video autoplay playsInline />")
         .attr("id", "video-url-player")
         .attr("src", videoUrl)
-        .attr("autoplay", "autoplay")
-        .attr("playsinline", "true")
         .appendTo("body");
 };
 

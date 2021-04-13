@@ -96,9 +96,7 @@ const addVideoNode = (participant, stream) => {
             .addClass("container")
             .appendTo("#videos-container");
 
-        $("<video />")
-            .attr("autoplay", "autoplay")
-            .attr("muted", true)
+        $("<video autoplay playsInline muted />")
             .appendTo(participantNode);
 
         // Add a temporary banner with the name of the participant
@@ -132,8 +130,7 @@ const addScreenShareNode = (stream) => {
         .addClass("container")
         .appendTo(screenshareNode);
 
-    let videoNode = $("<video />")
-        .attr("autoplay", "autoplay")
+    let videoNode = $("<video autoplay playsInline muted />")
         .appendTo(container);
 
     // Attach the stream to the video element
@@ -145,14 +142,17 @@ const removeScreenShareNode = () => {
     $("#screenshare").remove();
 };
 
+// Remove the screen share stream from the web page
+const removeScreenShareNode = () => {
+    $("#screenshare").remove();
+};
+
 
 // Add a Video player to the web page
 const addVideoPlayer = (videoUrl) => {
-    $("<video />")
+    $("<video autoplay playsinline />")
         .attr("id", "video-url-player")
         .attr("src", videoUrl)
-        .attr("autoplay", "autoplay")
-        .attr("playsinline", "true")
         .appendTo("body");
 };
 

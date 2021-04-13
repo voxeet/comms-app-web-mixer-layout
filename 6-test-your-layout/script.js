@@ -96,9 +96,7 @@ const addVideoNode = (participant, stream) => {
             .addClass("container")
             .appendTo("#videos-container");
 
-        $("<video />")
-            .attr("autoplay", "autoplay")
-            .attr("muted", true)
+        $("<video autoplay playsInline muted />")
             .appendTo(participantNode);
 
         // Add a temporary banner with the name of the participant
@@ -132,8 +130,7 @@ const addScreenShareNode = (stream) => {
         .addClass("container")
         .appendTo(screenshareNode);
 
-    let videoNode = $("<video />")
-        .attr("autoplay", "autoplay")
+    let videoNode = $("<video autoplay playsInline muted />")
         .appendTo(container);
 
     // Attach the stream to the video element
@@ -148,11 +145,9 @@ const removeScreenShareNode = () => {
 
 // Add a Video player to the web page
 const addVideoPlayer = (videoUrl) => {
-    $("<video />")
+    $("<video autoplay playsinline />")
         .attr("id", "video-url-player")
         .attr("src", videoUrl)
-        .attr("autoplay", "autoplay")
-        .attr("playsinline", "true")
         .appendTo("body");
 };
 
@@ -203,9 +198,9 @@ $(document).ready(() => {
 
 
     // Insert your consumer key, secret and conference id
-    const consumerKey = "";
-    const consumerSecret = "";
-    const conferenceId = "";
+    const consumerKey = "D-Z0Sk4gSOuBnk_js3N8-w==";
+    const consumerSecret = "CWKagObH2C68X4fgdOquT-GVd-5y2P5qLXDnPqJQBVE=";
+    const conferenceId = "6eeac50a-932f-4522-afba-f841336cf42f";
 
     VoxeetSDK.initialize(consumerKey, consumerSecret);
 
