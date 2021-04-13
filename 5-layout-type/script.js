@@ -8,15 +8,15 @@ const initializeVoxeetSDK = () => {
     // Reference: https://dolby.io/developers/interactivity-apis/client-sdk/reference-javascript/voxeetsdk#static-initializetoken
     VoxeetSDK.initializeToken(accessToken, () =>
         fetch(refreshUrl, {
-            method: 'POST',
+            method: "POST",
             headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + accessToken
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + accessToken
             },
             body: { refresh_token: refreshToken }
         })
-        .then(data => data.json())
-        .then(json => json.access_token)
+            .then((data) => data.json())
+            .then((json) => json.access_token)
     );
 };
 
@@ -25,6 +25,7 @@ const joinConference = () => {
     initializeVoxeetSDK();
 
     // Load the settings injected by the mixer
+    const catToken = $("#catToken").val();
     const conferenceId = $("#conferenceId").val();
     const thirdPartyId = $("#thirdPartyId").val();
     const layoutType = $("#layoutType").val();
@@ -36,6 +37,7 @@ const joinConference = () => {
     };
 
     const joinOptions = {
+        conferenceAccessToken: (catToken && catToken.length > 0 ? catToken : null),
         constraints: {
             video: false,
             audio: false
@@ -43,8 +45,7 @@ const joinConference = () => {
         mixing: {
             enabled: true
         },
-        userParams: {},
-        audio3D: false
+        userParams: {}
     };
     
     // Open a session for the mixer
@@ -60,6 +61,7 @@ const replayConference = () => {
     initializeVoxeetSDK();
 
     // Load the settings injected by the mixer
+    const catToken = $("#catToken").val();
     const conferenceId = $("#conferenceId").val();
     const thirdPartyId = $("#thirdPartyId").val();
     const layoutType = $("#layoutType").val();
@@ -69,35 +71,40 @@ const replayConference = () => {
         externalId: "Mixer_" + layoutType,
         thirdPartyId: thirdPartyId
     };
+
+    const replayOptions = {
+        conferenceAccessToken: (catToken && catToken.length > 0 ? catToken : null),
+        offset: 0
+    };
     
     // Open a session for the mixer
     VoxeetSDK.session.open(mixer)
         .then(() => VoxeetSDK.conference.fetch(conferenceId))
         // Replay the conference from the beginning
-        .then((conference) => VoxeetSDK.conference.replay(conference, 0, { enabled: true}))
+        .then((conference) => VoxeetSDK.conference.replay(conference, replayOptions, { enabled: true}))
         .catch((err) => console.log(err));
 };
 
 
 // Add the video stream to the web page
 const addVideoNode = (participant, stream) => {
-    let participantNode = $('#participant-' + participant.id);
+    let participantNode = $("#participant-" + participant.id);
 
     if (!participantNode.length) {
-        participantNode = $('<div />')
-            .attr('id', 'participant-' + participant.id)
-            .addClass('container')
-            .appendTo('#videos-container');
+        participantNode = $("<div />")
+            .attr("id", "participant-" + participant.id)
+            .addClass("container")
+            .appendTo("#videos-container");
 
-        $('<video />')
-            .attr('autoplay', 'autoplay')
-            .attr('muted', true)
+        $("<video />")
+            .attr("autoplay", "autoplay")
+            .attr("muted", true)
             .appendTo(participantNode);
 
         // Add a temporary banner with the name of the participant
-        let name = $('<p />').text(participant.info.name);
-        let bannerName = $('<div />')
-            .addClass('name-banner')
+        let name = $("<p />").text(participant.info.name);
+        let bannerName = $("<div />")
+            .addClass("name-banner")
             .append(name)
             .appendTo(participantNode);
 
@@ -106,67 +113,67 @@ const addVideoNode = (participant, stream) => {
     }
 
     // Attach the stream to the video element
-    navigator.attachMediaStream(participantNode.find('video').get(0), stream);
+    navigator.attachMediaStream(participantNode.find("video").get(0), stream);
 };
 
 // Remove the video stream from the web page
 const removeVideoNode = (participant) => {
-    $('#participant-' + participant.id).remove();
+    $("#participant-" + participant.id).remove();
 };
 
 
 // Add a screen share stream to the web page
 const addScreenShareNode = (stream) => {
-    let screenshareNode = $('<div />')
-        .attr('id', 'screenshare')
-        .appendTo('body');
+    let screenshareNode = $("<div />")
+        .attr("id", "screenshare")
+        .appendTo("body");
 
-    let container = $('<div />')
-        .addClass('container')
+    let container = $("<div />")
+        .addClass("container")
         .appendTo(screenshareNode);
 
-    let screenShareNode = $('<video />')
-        .attr('autoplay', 'autoplay')
+    let videoNode = $("<video />")
+        .attr("autoplay", "autoplay")
         .appendTo(container);
 
     // Attach the stream to the video element
-    navigator.attachMediaStream(screenShareNode.get(0), stream);
-}
+    navigator.attachMediaStream(videoNode.get(0), stream);
+};
 
 // Remove the screen share stream from the web page
 const removeScreenShareNode = () => {
-    $('#screenshare').remove();
-}
+    $("#screenshare").remove();
+};
 
 
 // Add a Video player to the web page
 const addVideoPlayer = (videoUrl) => {
-    $('<video />')
-        .attr('id', 'video-url-player')
-        .attr('src', videoUrl)
-        .attr('autoplay', 'autoplay')
-        .attr('playsinline', 'true')
-        .appendTo('body');
+    $("<video />")
+        .attr("id", "video-url-player")
+        .attr("src", videoUrl)
+        .attr("autoplay", "autoplay")
+        .attr("playsinline", "true")
+        .appendTo("body");
 };
 
 // Move the cursor in the video
 const seekVideoPlayer = (timestamp) => {
-    $('#video-url-player')[0].currentTime = timestamp;
+    $("#video-url-player")[0].currentTime = timestamp;
 };
 
 // Pause the video
 const pauseVideoPlayer = () => {
-    $('#video-url-player')[0].pause();
+    $("#video-url-player")[0].pause();
 };
 
 // Play the video
 const playVideoPlayer = () => {
-    $('#video-url-player')[0].play();
+    $("#video-url-player")[0].play();
 };
 
 // Remove the Video player from the web page
 const removeVideoPlayer = () => {
-    $('#video-url-player').remove();
+    $("#video-url-player").remove();
 };
 
 
@@ -174,8 +181,8 @@ const removeVideoPlayer = () => {
  * Let the mixer know when the conference has ended.
  */
 const onConferenceEnded = () => {
-    $('#conferenceStartedVoxeet').remove();
-    $('body').append('<div id="conferenceEndedVoxeet"></div>');
+    $("#conferenceStartedVoxeet").remove();
+    $("body").append('<div id="conferenceEndedVoxeet"></div>');
 };
 
 VoxeetSDK.conference.on("left", onConferenceEnded);
@@ -188,11 +195,11 @@ $(document).ready(() => {
     const layoutType = $("layoutType").val();
     if (layoutType === "stream" || layoutType === "hls") {
         // Display the live message for the live streams
-        $('#live').removeClass('hide');
+        $("#live").removeClass("hide");
     }
 
     // Remove this line, this is just a test
-    $('#live').removeClass('hide');
+    $("#live").removeClass("hide");
 
     // Inform the mixer that the application is ready to start
     $("<div />").attr("id", "conferenceStartedVoxeet").appendTo("body");
