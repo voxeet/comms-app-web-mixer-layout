@@ -8,15 +8,15 @@ const initializeVoxeetSDK = () => {
     // Reference: https://dolby.io/developers/interactivity-apis/client-sdk/reference-javascript/voxeetsdk#static-initializetoken
     VoxeetSDK.initializeToken(accessToken, () =>
         fetch(refreshUrl, {
-            method: 'POST',
+            method: "POST",
             headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + accessToken
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + accessToken
             },
             body: { refresh_token: refreshToken }
         })
-        .then(data => data.json())
-        .then(json => json.access_token)
+            .then((data) => data.json())
+            .then((json) => json.access_token)
     );
 };
 
@@ -25,6 +25,7 @@ const joinConference = () => {
     initializeVoxeetSDK();
 
     // Load the settings injected by the mixer
+    const catToken = $("#catToken").val();
     const conferenceId = $("#conferenceId").val();
     const thirdPartyId = $("#thirdPartyId").val();
     const layoutType = $("#layoutType").val();
@@ -36,6 +37,7 @@ const joinConference = () => {
     };
 
     const joinOptions = {
+        conferenceAccessToken: (catToken && catToken.length > 0 ? catToken : null),
         constraints: {
             video: false,
             audio: false
@@ -43,8 +45,7 @@ const joinConference = () => {
         mixing: {
             enabled: true
         },
-        userParams: {},
-        audio3D: false
+        userParams: {}
     };
     
     // Open a session for the mixer
@@ -60,6 +61,7 @@ const replayConference = () => {
     initializeVoxeetSDK();
 
     // Load the settings injected by the mixer
+    const catToken = $("#catToken").val();
     const conferenceId = $("#conferenceId").val();
     const thirdPartyId = $("#thirdPartyId").val();
     const layoutType = $("#layoutType").val();
@@ -69,12 +71,17 @@ const replayConference = () => {
         externalId: "Mixer_" + layoutType,
         thirdPartyId: thirdPartyId
     };
+
+    const replayOptions = {
+        conferenceAccessToken: (catToken && catToken.length > 0 ? catToken : null),
+        offset: 0
+    };
     
     // Open a session for the mixer
     VoxeetSDK.session.open(mixer)
         .then(() => VoxeetSDK.conference.fetch(conferenceId))
         // Replay the conference from the beginning
-        .then((conference) => VoxeetSDK.conference.replay(conference, 0, { enabled: true}))
+        .then((conference) => VoxeetSDK.conference.replay(conference, replayOptions, { enabled: true}))
         .catch((err) => console.log(err));
 };
 
@@ -82,8 +89,8 @@ const replayConference = () => {
  * Let the mixer know when the conference has ended.
  */
 const onConferenceEnded = () => {
-    $('#conferenceStartedVoxeet').remove();
-    $('body').append('<div id="conferenceEndedVoxeet"></div>');
+    $("#conferenceStartedVoxeet").remove();
+    $("body").append('<div id="conferenceEndedVoxeet"></div>');
 };
 
 VoxeetSDK.conference.on("left", onConferenceEnded);

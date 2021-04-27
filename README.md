@@ -1,5 +1,9 @@
 # Blog post - Mixer layout application for dolby.io
 
+## Update
+
+We have recently upgraded our mixer platform to generate recording and stream to an RTMP endpoint in 1080p. HLS streams are not affected and continue to use the 720p resolution. The blog post reflects those changes.
+
 ## Introduction
 
 A mixer layout application is a web app that the Dolby Interactivity APIs platform uses to generate the layout for a recording or to live stream a conference. A single application can generate a different presentation depending on the target. The mix can be of either a live conference or of a conference that has been recorded. The output can be an MP4 video file or streamed to a [Real-Time Messaging Protocol](https://en.wikipedia.org/wiki/Real-Time_Messaging_Protocol) (RTMP) endpoint like YouTube or Facebook, or using the Dolby own [HTTP Live Streaming](https://en.wikipedia.org/wiki/HTTP_Live_Streaming) (HLS) delivery system. The resulting presentation can contain the video from each participant, as well as screen shares, presentation files or videos being shared, and the size and position of each is under the control of the layout app. As participants join and leave, start and stop video streams or screen shares, presentation files or video sharing, the layout app is updated with these changes, allowing for a dynamic layout.
@@ -50,7 +54,7 @@ Let's start by creating an html page `index.html` that contains a link to `scrip
 
 Let's create an empty file `script.js` in the same folder as the HTML page, where we will write the logic of the application in the next step.
 
-The mixer is capturing the conference video in 720p so we will use a background image `background.png` with a resolution of 1280x720 pixels. Create the CSS file `styles.css` to load the background picture in full screen. Use this file to customize the colors and define your company's branding.
+The mixer is capturing the conference video in 1080p so we will use a background image `background.png` with a resolution of 1920x1080 pixels. Create the CSS file `styles.css` to load the background picture in full screen. Use this file to customize the colors and define your company's branding.
 
 ```css
 body {
@@ -60,7 +64,7 @@ body {
 }
 ```
 
-I highly recommend you create a custom "device" in Google Chrome Developer Tools with the 1280x720 resolution (as pictured below) in order to get the same experience as in the output of the mixer. Open the file `index.html` in Chrome and this is what your web application should look like at this end of this first step.
+I highly recommend you create a custom "device" in Google Chrome Developer Tools with the 1920x1080 resolution (as pictured below) in order to get the same experience as in the output of the mixer. Open the file `index.html` in Chrome and this is what your web application should look like at this end of this first step.
 
 ![](images/1-getting-started.png)
 
@@ -86,6 +90,7 @@ Insert this code in the body of the HTML page.
     <input type="hidden" value="accessToken" id="accessToken" name="accessToken"/>
     <input type="hidden" value="refreshToken" id="refreshToken" name="refreshToken"/>
     <input type="hidden" value="refreshUrl" id="refreshUrl" name="refreshUrl"/>
+    <input type="hidden" value="catToken" id="catToken" name="catToken"/>
     <input type="hidden" value="voxeet" id="conferenceId" name="conferenceId"/>
     <input type="hidden" value="1234" id="thirdPartyId" name="thirdPartyId"/>
     <input type="hidden" value="stream" id="layoutType" name="layoutType"/>
@@ -107,15 +112,15 @@ const initializeVoxeetSDK = () => {
     // Reference: https://dolby.io/developers/interactivity-apis/client-sdk/reference-javascript/voxeetsdk#static-initializetoken
     VoxeetSDK.initializeToken(accessToken, () =>
         fetch(refreshUrl, {
-            method: 'POST',
+            method: "POST",
             headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + accessToken
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + accessToken
             },
             body: { refresh_token: refreshToken }
         })
-        .then(data => data.json())
-        .then(json => json.access_token)
+            .then((data) => data.json())
+            .then((json) => json.access_token)
     );
 };
 ```
@@ -133,8 +138,8 @@ With the same concept, our application needs to signal the mixer when the confer
 
 ```javascript
 const onConferenceEnded = () => {
-    $('#conferenceStartedVoxeet').remove();
-    $('body').append('<div id="conferenceEndedVoxeet"></div>');
+    $("#conferenceStartedVoxeet").remove();
+    $("body").append('<div id="conferenceEndedVoxeet"></div>');
 };
 
 VoxeetSDK.conference.on("left", onConferenceEnded);
@@ -149,6 +154,7 @@ const joinConference = () => {
     initializeVoxeetSDK();
 
     // Load the settings injected by the mixer
+    const catToken = $("#catToken").val();
     const conferenceId = $("#conferenceId").val();
     const thirdPartyId = $("#thirdPartyId").val();
     const layoutType = $("#layoutType").val();
@@ -160,6 +166,7 @@ const joinConference = () => {
     };
 
     const joinOptions = {
+        conferenceAccessToken: (catToken && catToken.length > 0 ? catToken : null),
         constraints: {
             video: false,
             audio: false
@@ -167,8 +174,7 @@ const joinConference = () => {
         mixing: {
             enabled: true
         },
-        userParams: {},
-        audio3D: false
+        userParams: {}
     };
     
     // Open a session for the mixer
@@ -188,6 +194,7 @@ const replayConference = () => {
     initializeVoxeetSDK();
 
     // Load the settings injected by the mixer
+    const catToken = $("#catToken").val();
     const conferenceId = $("#conferenceId").val();
     const thirdPartyId = $("#thirdPartyId").val();
     const layoutType = $("#layoutType").val();
@@ -197,12 +204,17 @@ const replayConference = () => {
         externalId: "Mixer_" + layoutType,
         thirdPartyId: thirdPartyId
     };
+
+    const replayOptions = {
+        conferenceAccessToken: (catToken && catToken.length > 0 ? catToken : null),
+        offset: 0
+    };
     
     // Open a session for the mixer
     VoxeetSDK.session.open(mixer)
         .then(() => VoxeetSDK.conference.fetch(conferenceId))
         // Replay the conference from the beginning
-        .then((conference) => VoxeetSDK.conference.replay(conference, 0, { enabled: true}))
+        .then((conference) => VoxeetSDK.conference.replay(conference, replayOptions, { enabled: true}))
         .catch((err) => console.log(err));
 };
 ```
@@ -237,23 +249,21 @@ In the JavaScript code, create the function `addVideoNode(participant, stream)` 
 ```javascript
 // Add the video stream to the web page
 const addVideoNode = (participant, stream) => {
-    let participantNode = $('#participant-' + participant.id);
+    let participantNode = $("#participant-" + participant.id);
 
     if (!participantNode.length) {
-        participantNode = $('<div />')
-            .attr('id', 'participant-' + participant.id)
-            .addClass('container')
-            .appendTo('#videos-container');
+        participantNode = $("<div />")
+            .attr("id", "participant-" + participant.id)
+            .addClass("container")
+            .appendTo("#videos-container");
 
-        $('<video />')
-            .attr('autoplay', 'autoplay')
-            .attr('muted', true)
+        $("<video autoplay playsInline muted />")
             .appendTo(participantNode);
 
         // Add a temporary banner with the name of the participant
-        let name = $('<p />').text(participant.info.name);
-        let bannerName = $('<div />')
-            .addClass('name-banner')
+        let name = $("<p />").text(participant.info.name);
+        let bannerName = $("<div />")
+            .addClass("name-banner")
             .append(name)
             .appendTo(participantNode);
 
@@ -262,12 +272,12 @@ const addVideoNode = (participant, stream) => {
     }
 
     // Attach the stream to the video element
-    navigator.attachMediaStream(participantNode.find('video').get(0), stream);
+    navigator.attachMediaStream(participantNode.find("video").get(0), stream);
 };
 
 // Remove the video stream from the web page
 const removeVideoNode = (participant) => {
-    $('#participant-' + participant.id).remove();
+    $("#participant-" + participant.id).remove();
 };
 ```
 
@@ -276,26 +286,25 @@ Still in the JavaScript code, create the function `addScreenShareNode(stream)` t
 ```javascript
 // Add a screen share stream to the web page
 const addScreenShareNode = (stream) => {
-    let screenshareNode = $('<div />')
-        .attr('id', 'screenshare')
-        .appendTo('body');
+    let screenshareNode = $("<div />")
+        .attr("id", "screenshare")
+        .appendTo("body");
 
-    let container = $('<div />')
-        .addClass('container')
+    let container = $("<div />")
+        .addClass("container")
         .appendTo(screenshareNode);
 
-    let screenShareNode = $('<video />')
-        .attr('autoplay', 'autoplay')
+    let videoNode = $("<video autoplay playsInline muted />")
         .appendTo(container);
 
     // Attach the stream to the video element
-    navigator.attachMediaStream(screenShareNode.get(0), stream);
-}
+    navigator.attachMediaStream(videoNode.get(0), stream);
+};
 
 // Remove the screen share stream from the web page
 const removeScreenShareNode = () => {
-    $('#screenshare').remove();
-}
+    $("#screenshare").remove();
+};
 ```
 
 When a participant requests to play a video, create the function `addVideoPlayer(videoUrl)` to create a video player and start the video in full screen. Create the function `removeVideoPlayer()` to remove the video element once the video is stopped. There are a couple more functions that we can add to support all the scenarios about the video: `seekVideoPlayer(timestamp)` and `pauseVideoPlayer()`.
@@ -303,32 +312,30 @@ When a participant requests to play a video, create the function `addVideoPlayer
 ```javascript
 // Add a Video player to the web page
 const addVideoPlayer = (videoUrl) => {
-    $('<video />')
-        .attr('id', 'video-url-player')
-        .attr('src', videoUrl)
-        .attr('autoplay', 'autoplay')
-        .attr('playsinline', 'true')
-        .appendTo('body');
+    $("<video autoplay playsInline />")
+        .attr("id", "video-url-player")
+        .attr("src", videoUrl)
+        .appendTo("body");
 };
 
 // Move the cursor in the video
 const seekVideoPlayer = (timestamp) => {
-    $('#video-url-player')[0].currentTime = timestamp;
+    $("#video-url-player")[0].currentTime = timestamp;
 };
 
 // Pause the video
 const pauseVideoPlayer = () => {
-    $('#video-url-player')[0].pause();
+    $("#video-url-player")[0].pause();
 };
 
 // Play the video
 const playVideoPlayer = () => {
-    $('#video-url-player')[0].play();
+    $("#video-url-player")[0].play();
 };
 
 // Remove the Video player from the web page
 const removeVideoPlayer = () => {
-    $('#video-url-player').remove();
+    $("#video-url-player").remove();
 };
 ```
 
@@ -426,10 +433,10 @@ This `events.js` will subscribe to the conference events `streamAdded`, `streamU
 
 ```javascript
 // When a video stream is added to the conference
-VoxeetSDK.conference.on('streamAdded', (participant, stream) => {
+VoxeetSDK.conference.on("streamAdded", (participant, stream) => {
     console.log(`Event - streamAdded from ${participant.info.name} (${participant.id})`);
 
-    if (stream.type === 'ScreenShare') {
+    if (stream.type === "ScreenShare") {
         addScreenShareNode(stream);
     } else if (stream.getVideoTracks().length) {
         // Only add the video node if there is a video track
@@ -438,10 +445,10 @@ VoxeetSDK.conference.on('streamAdded', (participant, stream) => {
 });
 
 // When a video stream is updated from the conference
-VoxeetSDK.conference.on('streamUpdated', (participant, stream) => {
+VoxeetSDK.conference.on("streamUpdated", (participant, stream) => {
     console.log(`Event - streamUpdated from ${participant.info.name} (${participant.id})`);
 
-    if (stream.type === 'ScreenShare') return;
+    if (stream.type === "ScreenShare") return;
 
     if (stream.getVideoTracks().length) {
         // Only add the video node if there is a video track
@@ -452,10 +459,10 @@ VoxeetSDK.conference.on('streamUpdated', (participant, stream) => {
 });
 
 // When a video stream is removed from the conference
-VoxeetSDK.conference.on('streamRemoved', (participant, stream) => {
+VoxeetSDK.conference.on("streamRemoved", (participant, stream) => {
     console.log(`Event - streamRemoved from ${participant.info.name} (${participant.id})`);
 
-    if (stream.type === 'ScreenShare') {
+    if (stream.type === "ScreenShare") {
         removeScreenShareNode();
     } else {
         removeVideoNode(participant);
@@ -473,22 +480,22 @@ VoxeetSDK.videoPresentation.on("started", (vp) => {
 });
 
 VoxeetSDK.videoPresentation.on("paused", (vp) => {
-    console.log('Event - videoPresentation paused');
+    console.log("Event - videoPresentation paused");
     pauseVideoPlayer();
 });
 
 VoxeetSDK.videoPresentation.on("played", (vp) => {
-    console.log('Event - videoPresentation played');
+    console.log("Event - videoPresentation played");
     playVideoPlayer();
 });
 
 VoxeetSDK.videoPresentation.on("sought", (vp) => {
-    console.log('Event - videoPresentation sought');
+    console.log("Event - videoPresentation sought");
     seekVideoPlayer(vp.timestamp);
 });
 
 VoxeetSDK.videoPresentation.on("stopped", () => {
-    console.log('Event - videoPresentation stopped');
+    console.log("Event - videoPresentation stopped");
     removeVideoPlayer();
 });
 ```
@@ -546,7 +553,7 @@ And in the JavaScript, when the document is ready, in the `$(document).ready(() 
 const layoutType = $("layoutType").val();
 if (layoutType === "stream" || layoutType === "hls") {
     // Display the live message for the live streams
-    $('#live').removeClass('hide');
+    $("#live").removeClass("hide");
 }
 ```
 
@@ -554,7 +561,7 @@ If you want to see what the live message will look like, when the document is re
 
 ```javascript
 // Remove this line, this is just a test
-$('#live').removeClass('hide');
+$("#live").removeClass("hide");
 ```
 
 This is what the live message looks like:
