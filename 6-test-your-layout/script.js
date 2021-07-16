@@ -198,9 +198,9 @@ $(document).ready(() => {
 
 
     // Insert your consumer key, secret and conference id
-    const consumerKey = "D-Z0Sk4gSOuBnk_js3N8-w==";
-    const consumerSecret = "CWKagObH2C68X4fgdOquT-GVd-5y2P5qLXDnPqJQBVE=";
-    const conferenceId = "6eeac50a-932f-4522-afba-f841336cf42f";
+    const consumerKey = "CONSUMER_KEY";
+    const consumerSecret = "CONSUMER_SECRET";
+    const conferenceId = "CONFERENCE_ID";
 
     VoxeetSDK.initialize(consumerKey, consumerSecret);
 
