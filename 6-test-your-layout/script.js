@@ -53,7 +53,7 @@ const joinConference = () => {
         .then(() => VoxeetSDK.conference.fetch(conferenceId))
         // Join the conference
         .then((conference) => VoxeetSDK.conference.join(conference, joinOptions))
-        .catch((err) => console.log(err));
+        .catch((err) => console.error(err));
 };
 
 const replayConference = () => {
@@ -82,7 +82,7 @@ const replayConference = () => {
         .then(() => VoxeetSDK.conference.fetch(conferenceId))
         // Replay the conference from the beginning
         .then((conference) => VoxeetSDK.conference.replay(conference, replayOptions, { enabled: true}))
-        .catch((err) => console.log(err));
+        .catch((err) => console.error(err));
 };
 
 
@@ -197,12 +197,22 @@ $(document).ready(() => {
     $("<div />").attr("id", "conferenceStartedVoxeet").appendTo("body");
 
 
-    // Insert your consumer key, secret and conference id
-    const consumerKey = "CONSUMER_KEY";
-    const consumerSecret = "CONSUMER_SECRET";
+    // Initialize the SDK
+    // Please read the documentation at:
+    // https://docs.dolby.io/communications-apis/docs/initializing-javascript
+    // Insert your client access token (from the Dolby.io dashboard) and conference id
+    const clientAccessToken = "CLIENT_ACCESS_TOKEN";
     const conferenceId = "CONFERENCE_ID";
 
-    VoxeetSDK.initialize(consumerKey, consumerSecret);
+    VoxeetSDK.initializeToken(clientAccessToken, (isExpired) => {
+        return new Promise((resolve, reject) => {
+            if (isExpired) {
+                reject('The client access token has expired.');
+            } else {
+                resolve(clientAccessToken);
+            }
+        });
+    });
 
     const mixer = { name: "Test", externalId: "Test" };
     const joinOptions = { constraints: { video: false, audio: false } };
@@ -212,5 +222,5 @@ $(document).ready(() => {
         .then(() => VoxeetSDK.conference.fetch(conferenceId))
         // Join the conference
         .then((conference) => VoxeetSDK.conference.join(conference, joinOptions))
-        .catch((err) => console.log(err));
+        .catch((err) => console.error(err));
 });

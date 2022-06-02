@@ -53,7 +53,7 @@ const joinConference = () => {
         .then(() => VoxeetSDK.conference.fetch(conferenceId))
         // Join the conference
         .then((conference) => VoxeetSDK.conference.join(conference, joinOptions))
-        .catch((err) => console.log(err));
+        .catch((err) => console.error(err));
 };
 
 const replayConference = () => {
@@ -82,7 +82,7 @@ const replayConference = () => {
         .then(() => VoxeetSDK.conference.fetch(conferenceId))
         // Replay the conference from the beginning
         .then((conference) => VoxeetSDK.conference.replay(conference, replayOptions, { enabled: true}))
-        .catch((err) => console.log(err));
+        .catch((err) => console.error(err));
 };
 
 /*
