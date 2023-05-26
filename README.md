@@ -1,7 +1,7 @@
 ![Blog Picture](https://dolby.io/wp-content/uploads/2021/09/Creating-a-Custom-Mixer-Layout-for-Streaming-a-Conference.jpg)
 
 # Creating a Custom Mixer Layout for Streaming a Conference
-In this repository a mixer layout application will be made for recording and live streaming conferences. 
+In this repository, a mixer layout application will be made for recording and live streaming conferences. 
 
 # Overview
 [The tutorial](https://dolby.io/blog/creating-a-custom-mixer-layout-for-streaming-a-conference/) focuses on creating a mixer layout application using JavaScript and jQuery for recording and live streaming conferences using Dolby Interactivity APIs. The default open-source mixer layout application based on React.JS is available on GitHub, but the tutorial guides you on customizing the layout to match your branding or implementing custom logic. Each step of the tutorial provides code links for easy access to the latest updates.
