@@ -52,8 +52,3 @@ Using decades of Dolby's research in sight and sound technology, Dolby.io provid
 &nbsp; &nbsp; &nbsp;
   <a href="https://www.linkedin.com/company/dolbyio/" target="_blank"><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=flat-square&logo=linkedin&logoColor=white" alt="Dolby.io on LinkedIn"/></a>
 </div>
-
-
-
-
-Documentation: 
