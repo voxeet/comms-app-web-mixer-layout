@@ -1,4 +1,4 @@
-![Blog Picture](https://dolby.io/wp-content/uploads/2021/09/Creating-a-Custom-Mixer-Layout-for-Streaming-a-Conference.jpg)
+# :warning: This repository is no longer maintained :warning:
 
 # Creating a Custom Mixer Layout for Streaming a Conference
 In this repository, a mixer layout application will be made for recording and live streaming conferences. 
